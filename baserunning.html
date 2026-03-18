@@ -329,16 +329,21 @@
     <script src="js/nav.js"></script>
     <script>
     (function() {
-        var PASS_HASH = 'b8a7e24e95497806eafbe1b4a897b70ecf6e57f4bfca8c770091e1f075304006';
         var STORAGE_KEY = 'pirates_br_auth';
 
-        async function hashPassword(pw) {
-            var encoded = new TextEncoder().encode(pw.toLowerCase().trim());
-            var buffer = await crypto.subtle.digest('SHA-256', encoded);
-            return Array.from(new Uint8Array(buffer)).map(function(b) {
-                return b.toString(16).padStart(2, '0');
-            }).join('');
+        // Simple hash function that works over HTTP and HTTPS
+        function simpleHash(str) {
+            var hash = 0;
+            str = str.toLowerCase().trim();
+            for (var i = 0; i < str.length; i++) {
+                var char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32bit integer
+            }
+            return hash.toString(36);
         }
+
+        var PASS_HASH = simpleHash('slide');
 
         function unlock() {
             document.getElementById('passwordGate').style.display = 'none';
@@ -354,9 +359,9 @@
             document.querySelector('.footer').style.display = 'none';
         }
 
-        document.getElementById('passwordSubmit').addEventListener('click', async function() {
+        document.getElementById('passwordSubmit').addEventListener('click', function() {
             var input = document.getElementById('passwordInput').value;
-            var hash = await hashPassword(input);
+            var hash = simpleHash(input);
             if (hash === PASS_HASH) {
                 unlock();
             } else {
