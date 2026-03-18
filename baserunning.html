@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base Running | Bay State Pirates</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="logo.jpg" alt="Bay State Pirates" class="nav-logo-img">
+                <span class="logo-text">Bay State Pirates</span>
+            </a>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="stats.html">Stats</a></li>
+                <li><a href="schedule.html">Schedule</a></li>
+                <li><a href="standings.html">Standings</a></li>
+                <li><a href="gamefilm.html">Game Film</a></li>
+                <li><a href="training.html">Training</a></li>
+                <li><a href="baserunning.html" class="active">Base Running</a></li>
+                <li><a href="instagram.html">Instagram</a></li>
+                <li><a href="posts.html">Player Posts</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Password Gate -->
+    <div id="passwordGate" class="password-gate">
+        <div class="password-box">
+            <img src="logo.jpg" alt="Bay State Pirates" class="password-logo">
+            <h2>Base Running Rules</h2>
+            <p>Enter the team password to view</p>
+            <div class="password-input-group">
+                <input type="password" id="passwordInput" placeholder="Password" autocomplete="off">
+                <button id="passwordSubmit">Enter</button>
+            </div>
+            <p id="passwordError" class="password-error"></p>
+        </div>
+    </div>
+
+    <main id="pageContent" style="display: none;">
+        <div class="page-header">
+            <h1>Base Running Rules</h1>
+            <p>Know the rules before you hit the basepaths</p>
+        </div>
+
+        <section class="baserunning-section">
+            <div class="container">
+                <div class="rules-container">
+
+                    <div class="rules-intro">
+                        I've rewatched all our games, and the easiest thing to improve on is our baserunning. We made far too many mistakes on the base paths last season, myself included. With this in mind, the managers have created a list of rules for us to follow. Some of them are classic baseball guidelines we all should know, and others are inspired by past self-inflicted outs and unique situations. Most baseball games are won or lost on the margins, so please study up. This should be a collaborative list &mdash; feel free to ask any questions or suggest any additions.
+                    </div>
+
+                    <!-- ===== RISK VS. REWARD ===== -->
+                    <h2 class="section-header"><span class="section-icon">&#9878;</span> Risk vs. Reward</h2>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">1</span> Read the Situation</h3>
+                        <p>Understand when to be aggressive and when to play it safe. For example, if we are down by six runs, do not try to steal third or take the extra base.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">2</span> Two-Out Aggression</h3>
+                        <p>In general (but not always, as explained in the next two rules), you can be more aggressive with two outs because you are less likely to prevent the chance of a big inning by potentially making the third out.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">3</span> Never Make the First or Third Out at Third Base</h3>
+                        <p>You would otherwise be in scoring position with no outs or two outs, and the marginal gain isn't worth it. This means that if you are on second and a fly ball is hit, you are more likely to tag up if the caught fly ball is the first out than if there is already one out before the ball is hit and the caught ball is the second out.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">4</span> Station to Station</h3>
+                        <p>If we are down by multiple runs in the final inning, you need to be 100% certain you can make it to the next bag because there is no upside to being aggressive until the tying run is on base. We will remind each other of this rule by saying "station to station." This rule stops applying when we are trailing by one, and you represent the tying run, in which case you can be slightly more aggressive. Here is a real-life example of this situation: <a href="https://www.youtube.com/results?search_query=This+Base+Running+Mistake+Ends+the+Game" target="_blank" rel="noopener">This Base Running Mistake Ends the Game</a></p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">5</span> Don't Kill an Inning</h3>
+                        <p>Making an unforced first out of an inning anywhere on the bases is an absolute inning-killer.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">6</span> Steal on 3-2 Counts</h3>
+                        <p>If you are fast and on first base, you should be stealing with a 3-2 count, regardless of how many outs there are, unless the score is lopsided or the catcher has a cannon (like the Spinners catcher). Stealing in these situations carries less risk because the pitcher has to throw a strike to the batter, who hopefully gets a good pitch to hit or takes ball four.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">7</span> It's OK to Be Conservative</h3>
+                        <p>If you don't feel confident on the base paths, it's completely fine to be conservative when you're on. Being overly aggressive leads to more damaging outcomes than being overly careful because cautiousness always means the next batter will get an opportunity to drive you in.</p>
+                    </div>
+
+                    <!-- ===== STRATEGY ===== -->
+                    <h2 class="section-header"><span class="section-icon">&#9813;</span> Strategy</h2>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">8</span> Don't Swing on a Good Jump</h3>
+                        <p>If you have no strikes as the batter and you notice a base stealer gets a good jump, don't swing. You can also consider faking a bunt to distract the defense.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">9</span> Fake Steals</h3>
+                        <p>When on first, it's often useful to fake a steal by shortening your lead, then taking a few hard strides toward second (as long as you can get back to the base) to move the defense around. This is especially helpful when a right-handed batter is up who can hit to the opposite field while the second baseman is covering the base. Just don't do this with no strikes because the batter might think you are actually stealing and take a hittable pitch.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">10</span> First-and-Third: Runner on First</h3>
+                        <p>As a runner on first base in first-and-third situations with less than two outs, you are almost always stealing, unless we are trailing by multiple runs in the final inning and we are moving station to station. If there are two outs, only steal if you have a high chance of making it safely, taking into account the catcher's arm strength. Also consider if the speed of the runner on third base would allow him to score if the opposing team cuts the ball off and throws home.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">11</span> First-and-Third: Runner on Third</h3>
+                        <p>As the runner on third base in first-and-third situations, you need to make a snap read as to whether the ball is thrown all the way to second before attempting to score. If you see a middle infielder creep in to cut the ball off, stay on third.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">12</span> Obstruction in Rundowns</h3>
+                        <p>If you're in a rundown and notice a fielder is in the base path, run into him to try to get the umpire to call interference.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">13</span> No First-to-Third on Passed Balls</h3>
+                        <p>None of us are fast enough to go first to third on a passed ball.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">14</span> The Contact Play</h3>
+                        <p>If you are on third with no outs and a ground ball is hit to an infielder playing in, stay on third to give the next batter an opportunity to drive you in. If there is one out, try to score immediately on contact, forcing the infielder to make a throw home. Do not get caught halfway and get in a rundown under either scenario.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">15</span> Strong Secondary Lead on the Contact Play</h3>
+                        <p>If the Contact Play is on, make sure you get a strong secondary lead (and bolt back to third if the catcher receives the ball). We saw why in the World Series: <a href="https://youtube.com/shorts/AfH8rVfWR1g?si=5yYZPM0muUiL-aPF" target="_blank" rel="noopener">Watch the clip</a></p>
+                    </div>
+
+                    <!-- ===== TECHNIQUE ===== -->
+                    <h2 class="section-header"><span class="section-icon">&#9881;</span> Technique</h2>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">16</span> Peek In When Stealing</h3>
+                        <p>When stealing, peek in toward the batter after a few strides so you know whether you need to get back to the base if the ball is hit in the air, OR the ball is hit through the infield and you can take an extra base. We have been doubled off numerous times on simple fly balls because we didn't do this. This video explains this situation well for both the defense and offense: <a href="https://www.youtube.com/results?search_query=You+Should+Do+THIS+As+A+Base+Runner+When+You+Steal" target="_blank" rel="noopener">You Should Do THIS As A Base Runner When You Steal!</a></p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">17</span> The Vault Steal</h3>
+                        <p>As someone who steals bases, I am personally a fan of the vault steal. Learn how to do it here: <a href="https://youtube.com/shorts/g7IvRdKx2Q8?si=yZcRysHpXRVFBHXi" target="_blank" rel="noopener">Vault Steal Tutorial</a></p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">18</span> Aggressive Secondary Leads</h3>
+                        <p>Your secondary leads should be aggressive off the base but equally as aggressive back to it. <a href="https://www.youtube.com/results?search_query=How+to+Take+a+Secondary+Lead" target="_blank" rel="noopener">How to Take a Secondary Lead</a></p>
+                    </div>
+
+                    <!-- ===== KNOWING YOUR OPPONENT ===== -->
+                    <h2 class="section-header"><span class="section-icon">&#128065;</span> Knowing Your Opponent</h2>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">19</span> Scout the Arms</h3>
+                        <p>Have a sense of how strong the arms of the players are on the opposing team, especially their catcher, and if he likes to back pick. Mori on the Bombers likes to throw behind runners, for example.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">20</span> Watch for Trickery</h3>
+                        <p>Watch out for trickery. For instance, pitchers on the Angels like to pretend they are working from the windup with runners on base before attempting a pickoff. I have not seen a team attempt a hidden ball trick, but be aware of that possibility and call it out if you see it.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">21</span> First-and-Third Defense Tendencies</h3>
+                        <p>In first-and-third situations, have a sense of what the opposing defense likes to do.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">22</span> Pitcher Delivery Speed</h3>
+                        <p>Take into account how quickly a pitcher delivers the ball to the plate. O'Leary on the Thunder, for example, has a very quick move home, making it harder to steal.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">23</span> Catcher Scouting Report</h3>
+                        <p>Based on last season, the following teams are those with catchers adept at controlling the run game: <strong>Spinners, Bombers, Senators, Expos, and Irish.</strong> We can be more aggressive against the <strong>Thunder, Angels, A's, Bison, and Bandits</strong> until proven otherwise. But of course, watch the catcher's warmup throw down to second to assess his arm strength.</p>
+                    </div>
+
+                    <!-- ===== BASEBALL FUNDAMENTALS ===== -->
+                    <h2 class="section-header"><span class="section-icon">&#9918;</span> Baseball Fundamentals</h2>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">24</span> Ground Ball Reads from Second</h3>
+                        <p>If you are on second with no one else on base, and the batter hits a ground ball toward an infielder, you always advance to third if the ball is hit behind you/to your left. Stay put or wait until the infielder throws if the ball is hit in front of you/to your right.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">25</span> Ball Past the Pitcher</h3>
+                        <p>Make sure a ground ball gets past the pitcher if you want to advance while on second or third when there's no force.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">26</span> Fly Ball Positioning</h3>
+                        <p>As a general rule, you are supposed to go about halfway to the next base when a fly ball is hit, but you should adjust how far you go down the line depending on how deep the ball is. For example, if you're on first, and the ball is crushed into the left-center gap, you can likely go all the way to second and still have time to get back if it's caught.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">27</span> Full Count Pickoff Awareness</h3>
+                        <p>When you are automatically stealing with two outs and a full count, be entirely certain the pitcher is delivering the ball home. Pitchers often attempt a pickoff in these situations because they know you're stealing.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">28</span> Advance During Rundowns</h3>
+                        <p>If a runner in front of you gets in a rundown, try to advance as far as you can while your teammate tries to stay in the pickle as long as possible.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">29</span> Get Back on Line Drives</h3>
+                        <p>Don't just freeze on a low line drive, head back to the base. Real-life example: <a href="https://www.youtube.com/results?search_query=Base+Running+Back+On+the+Line+Drive" target="_blank" rel="noopener">Base Running - Back On the Line Drive</a></p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">30</span> Copy the Runner Ahead of You</h3>
+                        <p>If you are on first and there's a runner on second, you copy what he does. If he gets off the base on a fly ball, you do the same. If he tags, you tag and read the play to see if you can make it to second. If he steals, you steal.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">31</span> Use Your Eyes vs. the Base Coach</h3>
+                        <p>If you can see where the ball is (e.g., you are rounding second and the ball is down the left field line), it is faster for you to make your own read as to whether to take the next base than it is to pick up the base coach. If you can't see the ball, always listen to the base coach.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">32</span> Avoid Interference on Double Plays</h3>
+                        <p>Slide or get out of the baseline when the opposing team is turning a double play to ensure you are not called for interference.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">33</span> Walks Are Gold</h3>
+                        <p>Walks are usually as good as hits &mdash; get on base any way you can.</p>
+                    </div>
+
+                    <!-- ===== UMPIRES ===== -->
+                    <h2 class="section-header"><span class="section-icon">&#128100;</span> Umpires</h2>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">34</span> Don't Argue Bang-Bang Plays</h3>
+                        <p>Please don't argue on bang-bang plays. As the runner, it always feels like you are safe, even if the call can go either way.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">35</span> Ump Positioning Reality</h3>
+                        <p>Many of the umpires are old and out of shape, and therefore will not put themselves in a position to make good calls. If the ball beats you to a base, you will likely get called out even if you get your hand or foot in before getting tagged.</p>
+                    </div>
+
+                    <!-- ===== EFFORT AND FOCUS ===== -->
+                    <h2 class="section-header"><span class="section-icon">&#128170;</span> Effort and Focus</h2>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">36</span> SLIDE!</h3>
+                        <p>Too many times, we get called out because we didn't slide into a bag or dive back on a pickoff attempt. You get to the base faster and reduce the chance of injury.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">37</span> Run Hard with Two Outs</h3>
+                        <p>There should be no hesitation when running hard on contact with two outs, but that doesn't mean you should run into an out. Example: <a href="https://x.com/buckeyenatty/status/2029005928654160238?s=46" target="_blank" rel="noopener">Watch this example</a></p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">38</span> Always Be Prepared</h3>
+                        <p>ALWAYS run hard, know how many outs there are, and think about what you should do if the ball is hit on the ground or in the air.</p>
+                    </div>
+
+                    <!-- ===== BASE COACHING AND COMMUNICATION ===== -->
+                    <h2 class="section-header"><span class="section-icon">&#128227;</span> Base Coaching and Communication</h2>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">39</span> First Base Coach Duties</h3>
+                        <p>The first base coach is responsible for ensuring a runner on first doesn't get back-picked, and the third base coach is responsible for ensuring runners on second and third don't get back-picked.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">40</span> Clear Stop Signals</h3>
+                        <p>As a base coach, you should put one hand up and point with your other hand to the base you want a runner to stop at to avoid any confusion. This video explains why: <a href="https://www.youtube.com/results?search_query=Is+This+Base+Runners+or+3rd+Base+Coaches+Fault" target="_blank" rel="noopener">Is This Base Runner's or 3rd Base Coach's Fault?</a></p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">41</span> On-Deck Batter Slide Signal</h3>
+                        <p>When a runner is trying to score, the on-deck batter or a runner who has already scored on the same play is responsible for gesturing if he needs to slide, which requires moving into the runner's eye line.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">42</span> Guide Runners Home</h3>
+                        <p>On any close play, the third base coach or player guiding the runner home should wave to get down and angle them to the correct side of the bag/plate.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">43</span> Say "STAY," Not "NO"</h3>
+                        <p>Yelling "NO" from the bench sounds like "GO." "STAY" works better.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">44</span> Steal Signals</h3>
+                        <p>We may establish signs down the road, but for now, if you hear "keep the line moving, [batter's name]," (or even if you hear that sentence without a name mentioned), then that is your cue to steal. However, if you are confident in your baserunning and understand the guidelines above, you have the green light to steal when the situation presents itself.</p>
+                    </div>
+
+                    <div class="rule-card">
+                        <h3><span class="rule-number">45</span> Constant Communication</h3>
+                        <p>Base coaches should be constantly reminding runners of all the rules above, tailored to the situation. Most mistakes can be prevented by good communication.</p>
+                    </div>
+
+                    <p class="rules-note">
+                        The best teams in our league do not make unforced errors on the base paths. Let's aspire to be a great base running team.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <span class="footer-logo"><img src="logo.jpg" alt="" class="footer-logo-img"> Bay State Pirates</span>
+                <span class="footer-text">Boston Metro Baseball League</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/nav.js"></script>
+    <script>
+    (function() {
+        var PASS_HASH = 'b8a7e24e95497806eafbe1b4a897b70ecf6e57f4bfca8c770091e1f075304006';
+        var STORAGE_KEY = 'pirates_br_auth';
+
+        async function hashPassword(pw) {
+            var encoded = new TextEncoder().encode(pw.toLowerCase().trim());
+            var buffer = await crypto.subtle.digest('SHA-256', encoded);
+            return Array.from(new Uint8Array(buffer)).map(function(b) {
+                return b.toString(16).padStart(2, '0');
+            }).join('');
+        }
+
+        function unlock() {
+            document.getElementById('passwordGate').style.display = 'none';
+            document.getElementById('pageContent').style.display = '';
+            document.querySelector('.footer').style.display = '';
+            sessionStorage.setItem(STORAGE_KEY, '1');
+        }
+
+        // Check if already authenticated this session
+        if (sessionStorage.getItem(STORAGE_KEY) === '1') {
+            unlock();
+        } else {
+            document.querySelector('.footer').style.display = 'none';
+        }
+
+        document.getElementById('passwordSubmit').addEventListener('click', async function() {
+            var input = document.getElementById('passwordInput').value;
+            var hash = await hashPassword(input);
+            if (hash === PASS_HASH) {
+                unlock();
+            } else {
+                document.getElementById('passwordError').textContent = 'Incorrect password. Try again.';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        });
+
+        document.getElementById('passwordInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('passwordSubmit').click();
+            }
+        });
+    })();
+    </script>
+</body>
+</html>

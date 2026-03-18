@@ -1,0 +1,1078 @@
+/* ========================================
+   Bay State Pirates - Pittsburgh Pirates Theme
+   Colors: Black #27251F, Gold #FDB827, White #FFFFFF
+   ======================================== */
+
+:root {
+    --black: #27251F;
+    --gold: #FDB827;
+    --gold-dark: #D4991F;
+    --gold-light: #FFD060;
+    --white: #FFFFFF;
+    --gray-100: #F5F5F5;
+    --gray-200: #E8E8E8;
+    --gray-300: #D1D1D1;
+    --gray-600: #666666;
+    --gray-800: #333333;
+    --shadow: 0 2px 8px rgba(0,0,0,0.15);
+    --shadow-lg: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--gray-100);
+    color: var(--black);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ========================================
+   Navbar
+   ======================================== */
+.navbar {
+    background-color: var(--black);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--gold);
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.logo-icon {
+    font-size: 1.8rem;
+}
+
+.nav-logo-img {
+    height: 44px;
+    width: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 4px;
+}
+
+.nav-links a {
+    color: var(--white);
+    text-decoration: none;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 500;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 8px 10px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    background-color: var(--gold);
+    color: var(--black);
+}
+
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.nav-toggle span {
+    display: block;
+    width: 26px;
+    height: 3px;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: 0.3s;
+}
+
+/* ========================================
+   Hero Section (Home)
+   ======================================== */
+.hero {
+    background: linear-gradient(135deg, var(--black) 0%, #1a1a16 50%, var(--black) 100%);
+    position: relative;
+    padding: 100px 20px;
+    text-align: center;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '☠';
+    position: absolute;
+    font-size: 300px;
+    opacity: 0.04;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-logo-img {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border: 4px solid var(--gold);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+
+.hero-title {
+    font-size: 4rem;
+    color: var(--gold);
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.hero-subtitle {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.3rem;
+    color: var(--white);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    opacity: 0.9;
+}
+
+.hero-divider {
+    width: 80px;
+    height: 4px;
+    background: var(--gold);
+    margin: 24px auto;
+    border-radius: 2px;
+}
+
+.hero-tagline {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.6rem;
+    color: var(--gold-light);
+    font-style: italic;
+    letter-spacing: 2px;
+}
+
+/* ========================================
+   Home Cards
+   ======================================== */
+.home-cards {
+    padding: 60px 0;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.home-card {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 32px 20px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--black);
+    box-shadow: var(--shadow);
+    transition: all 0.25s ease;
+    border-top: 4px solid var(--gold);
+}
+
+.home-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-top-color: var(--gold-dark);
+}
+
+.card-icon {
+    font-size: 2.4rem;
+    margin-bottom: 12px;
+}
+
+.home-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: var(--black);
+}
+
+.home-card p {
+    font-size: 0.9rem;
+    color: var(--gray-600);
+    line-height: 1.4;
+}
+
+/* ========================================
+   Page Header
+   ======================================== */
+.page-header {
+    background: var(--black);
+    padding: 48px 20px;
+    text-align: center;
+}
+
+.page-header h1 {
+    color: var(--gold);
+    font-size: 2.6rem;
+    letter-spacing: 3px;
+}
+
+.page-header p {
+    color: var(--gray-300);
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.1rem;
+    margin-top: 8px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* ========================================
+   Stats Page
+   ======================================== */
+.stats-section {
+    padding: 40px 0 60px;
+}
+
+.stats-info {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.stats-info p {
+    color: var(--gray-600);
+    font-size: 1rem;
+    margin-bottom: 16px;
+}
+
+.gc-link {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--black);
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 12px 32px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.gc-link:hover {
+    background: var(--gold-dark);
+}
+
+.stats-embed-container {
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    min-height: 600px;
+}
+
+.stats-embed-container iframe {
+    width: 100%;
+    height: 700px;
+    border: none;
+}
+
+.stats-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    color: var(--gray-600);
+    text-align: center;
+    padding: 40px;
+}
+
+.stats-placeholder .placeholder-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+}
+
+.stats-placeholder h3 {
+    margin-bottom: 8px;
+    color: var(--black);
+}
+
+/* ========================================
+   Game Film Page
+   ======================================== */
+.gamefilm-section {
+    padding: 40px 0 60px;
+}
+
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 24px;
+}
+
+.video-card {
+    background: var(--white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+}
+
+.video-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.video-info {
+    padding: 16px;
+}
+
+.video-info h3 {
+    font-size: 1rem;
+    margin-bottom: 4px;
+}
+
+.video-info p {
+    color: var(--gray-600);
+    font-size: 0.85rem;
+}
+
+.yt-channel-link {
+    text-align: center;
+    margin-top: 32px;
+}
+
+/* ========================================
+   Base Running Page
+   ======================================== */
+.baserunning-section {
+    padding: 40px 0 60px;
+}
+
+.rules-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.rule-card {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--gold);
+}
+
+.rule-card h3 {
+    font-size: 1.1rem;
+    color: var(--black);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rule-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: var(--gold);
+    color: var(--black);
+    border-radius: 50%;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.rule-card p, .rule-card ul {
+    color: var(--gray-800);
+    line-height: 1.7;
+    font-size: 0.95rem;
+    margin-left: 40px;
+}
+
+.rule-card ul {
+    padding-left: 20px;
+}
+
+.rule-card li {
+    margin-bottom: 4px;
+}
+
+.rules-intro {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--gold);
+    line-height: 1.7;
+    color: var(--gray-800);
+    font-size: 0.95rem;
+}
+
+.section-header {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--black);
+    margin: 36px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-header .section-icon {
+    font-size: 1.3rem;
+}
+
+.rule-card p a,
+.rule-card a,
+.rules-intro a {
+    color: #1a73e8;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.rule-card p a:hover,
+.rule-card a:hover,
+.rules-intro a:hover {
+    text-decoration: underline;
+}
+
+.rules-note {
+    max-width: 800px;
+    margin: 24px auto 0;
+    text-align: center;
+    color: var(--gray-600);
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* ========================================
+   Instagram Page
+   ======================================== */
+.instagram-section {
+    padding: 40px 0 60px;
+}
+
+.instagram-embed-container {
+    max-width: 540px;
+    margin: 0 auto;
+}
+
+.instagram-feed-link {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.instagram-feed-link a {
+    display: inline-block;
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    color: var(--white);
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 12px 32px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.instagram-feed-link a:hover {
+    opacity: 0.9;
+}
+
+.ig-placeholder {
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: 60px 40px;
+    text-align: center;
+}
+
+.ig-placeholder .placeholder-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+}
+
+.ig-placeholder h3 {
+    margin-bottom: 12px;
+}
+
+.ig-placeholder p {
+    color: var(--gray-600);
+    line-height: 1.6;
+}
+
+.ig-placeholder code {
+    background: var(--gray-200);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.85rem;
+}
+
+/* ========================================
+   Player Posts Page
+   ======================================== */
+.posts-section {
+    padding: 40px 0 60px;
+}
+
+.posts-container {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* New Post Form */
+.new-post-form {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 32px;
+    border-top: 4px solid var(--gold);
+}
+
+.new-post-form h3 {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+    color: var(--black);
+}
+
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    display: block;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    color: var(--gray-600);
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid var(--gray-200);
+    border-radius: 4px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.btn-post {
+    background: var(--gold);
+    color: var(--black);
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 10px 28px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-post:hover {
+    background: var(--gold-dark);
+}
+
+/* Posts Feed */
+.post-card {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.post-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--gold);
+    color: var(--black);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.post-meta .post-author {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    text-transform: uppercase;
+}
+
+.post-meta .post-time {
+    font-size: 0.8rem;
+    color: var(--gray-600);
+}
+
+.post-body {
+    margin-bottom: 12px;
+}
+
+.post-body p {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.post-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #1a73e8;
+    text-decoration: none;
+    font-size: 0.9rem;
+    word-break: break-all;
+}
+
+.post-link:hover {
+    text-decoration: underline;
+}
+
+.post-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--gray-200);
+}
+
+.btn-like {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 2px solid var(--gray-200);
+    border-radius: 20px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.85rem;
+    color: var(--gray-600);
+    transition: all 0.2s;
+}
+
+.btn-like:hover {
+    border-color: var(--gold);
+    color: var(--black);
+}
+
+.btn-like.liked {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--black);
+    font-weight: 600;
+}
+
+.btn-comment-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.85rem;
+    color: var(--gray-600);
+    padding: 6px 4px;
+    transition: color 0.2s;
+}
+
+.btn-comment-toggle:hover {
+    color: var(--black);
+}
+
+/* Comments */
+.comments-section {
+    display: none;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--gray-200);
+}
+
+.comments-section.open {
+    display: block;
+}
+
+.comment {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.comment-avatar {
+    width: 28px;
+    height: 28px;
+    background: var(--gray-200);
+    color: var(--gray-600);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 0.7rem;
+    flex-shrink: 0;
+}
+
+.comment-content {
+    flex: 1;
+}
+
+.comment-content .comment-author {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.comment-content .comment-text {
+    font-size: 0.9rem;
+    color: var(--gray-800);
+    line-height: 1.4;
+}
+
+.comment-content .comment-time {
+    font-size: 0.75rem;
+    color: var(--gray-600);
+    margin-top: 2px;
+}
+
+.add-comment {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.add-comment input[type="text"] {
+    flex: 1;
+    padding: 8px 12px;
+    border: 2px solid var(--gray-200);
+    border-radius: 20px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.85rem;
+}
+
+.add-comment input[type="text"]:focus {
+    outline: none;
+    border-color: var(--gold);
+}
+
+.add-comment button {
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.add-comment button:hover {
+    background: var(--gold-dark);
+}
+
+.no-posts {
+    text-align: center;
+    padding: 40px;
+    color: var(--gray-600);
+}
+
+/* ========================================
+   Password Gate
+   ======================================== */
+.password-gate {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 900;
+}
+
+.password-box {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 48px 40px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: var(--shadow-lg);
+}
+
+.password-logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border: 3px solid var(--gold);
+}
+
+.password-box h2 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.6rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    color: var(--black);
+}
+
+.password-box > p {
+    color: var(--gray-600);
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+}
+
+.password-input-group {
+    display: flex;
+    gap: 8px;
+}
+
+.password-input-group input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid var(--gray-200);
+    border-radius: 6px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+}
+
+.password-input-group input:focus {
+    outline: none;
+    border-color: var(--gold);
+}
+
+.password-input-group button {
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    border-radius: 6px;
+    padding: 12px 24px;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.password-input-group button:hover {
+    background: var(--gold-dark);
+}
+
+.password-error {
+    color: #d32f2f;
+    font-size: 0.85rem;
+    margin-top: 12px;
+    min-height: 1.2em;
+}
+
+/* ========================================
+   Footer
+   ======================================== */
+.footer {
+    background: var(--black);
+    padding: 24px 20px;
+    margin-top: auto;
+}
+
+.footer-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--gold);
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.footer-logo-img {
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.footer-text {
+    color: var(--gray-600);
+    font-size: 0.85rem;
+}
+
+/* ========================================
+   Responsive
+   ======================================== */
+@media (max-width: 768px) {
+    .nav-toggle {
+        display: flex;
+    }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        background: var(--black);
+        flex-direction: column;
+        padding: 12px 20px 20px;
+        gap: 2px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    .nav-links.open {
+        display: flex;
+    }
+
+    .nav-links a {
+        display: block;
+        padding: 10px 14px;
+    }
+
+    .hero-title {
+        font-size: 2.6rem;
+    }
+
+    .hero-tagline {
+        font-size: 1.2rem;
+    }
+
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .video-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
+}

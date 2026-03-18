@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "WebFetch(domain:www.youtube.com)",
+      "Bash(curl -s \"https://www.youtube.com/@BayStatePirates\")",
+      "WebFetch(domain:www.instagram.com)",
+      "Bash(curl -s \"https://www.instagram.com/baystatepirates/\")",
+      "Bash(curl -s -A \"Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" \"https://www.instagram.com/baystatepirates/\")",
+      "Bash(curl -s -A \"Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" \"https://www.instagram.com/baystatepirates/\" -o /tmp/ig_page.html)",
+      "Read(//tmp/**)",
+      "Bash(curl -s -L -A \"Mozilla/5.0\" \"https://www.instagram.com/baystatepirates/\")",
+      "Bash(printf 'slide')",
+      "Bash(shasum -a 256)",
+      "WebFetch(domain:400hitter.com)",
+      "Bash(curl -s -A \"Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" \"https://400hitter.com/schedule?SeID=397&CtID=0\" -o /tmp/schedule.html)",
+      "Bash(curl -s -A \"Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" \"https://400hitter.com/standings?SeID=397&CtID=0\" -o /tmp/standings.html)",
+      "Bash(gh auth:*)",
+      "Bash(brew install:*)",
+      "Bash(npm --version)",
+      "Bash(export PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\")",
+      "Bash(/opt/homebrew/bin/brew install:*)",
+      "Bash(/opt/homebrew/bin/gh auth:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}

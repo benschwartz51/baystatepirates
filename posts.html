@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Posts | Bay State Pirates</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="logo.jpg" alt="Bay State Pirates" class="nav-logo-img">
+                <span class="logo-text">Bay State Pirates</span>
+            </a>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="stats.html">Stats</a></li>
+                <li><a href="schedule.html">Schedule</a></li>
+                <li><a href="standings.html">Standings</a></li>
+                <li><a href="gamefilm.html">Game Film</a></li>
+                <li><a href="training.html">Training</a></li>
+                <li><a href="baserunning.html">Base Running</a></li>
+                <li><a href="instagram.html">Instagram</a></li>
+                <li><a href="posts.html" class="active">Player Posts</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <div class="page-header">
+            <h1>Player Posts</h1>
+            <p>Share links, talk baseball</p>
+        </div>
+
+        <section class="posts-section">
+            <div class="container">
+                <div class="posts-container">
+                    <!-- New Post Form -->
+                    <div class="new-post-form">
+                        <h3>Share Something With the Team</h3>
+                        <div class="form-group">
+                            <label for="postName">Your Name</label>
+                            <input type="text" id="postName" placeholder="e.g. Big Mike">
+                        </div>
+                        <div class="form-group">
+                            <label for="postText">What's on your mind?</label>
+                            <textarea id="postText" rows="2" placeholder="Write something..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="postLink">Link (optional)</label>
+                            <input type="url" id="postLink" placeholder="https://...">
+                        </div>
+                        <button class="btn-post" id="submitPost">Post It</button>
+                    </div>
+
+                    <!-- Posts Feed -->
+                    <div id="postsFeed"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <span class="footer-logo"><img src="logo.jpg" alt="" class="footer-logo-img"> Bay State Pirates</span>
+                <span class="footer-text">Boston Metro Baseball League</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/nav.js"></script>
+    <script src="js/posts.js"></script>
+</body>
+</html>
