@@ -96,7 +96,7 @@
                 <canvas id="baseballGame" width="800" height="500" style="display:block; margin:0 auto; background:#2d7a3a; border:3px solid var(--gold); border-radius:8px; max-width:100%; cursor:pointer;"></canvas>
                 <div id="gameControls" style="text-align:center; margin-top:15px;">
                     <button id="startBtn" style="background:var(--gold); color:#000; border:none; padding:12px 30px; font-family:'Oswald',sans-serif; font-size:1.1rem; border-radius:5px; cursor:pointer; font-weight:600;">⚾ PLAY BALL!</button>
-                    <p style="color:#ccc; font-size:0.85rem; margin-top:8px;">Click/tap to swing when the pitch is in the zone!</p>
+                    <p style="color:#ccc; font-size:0.85rem; margin-top:8px;">🏏 Click/tap to swing when batting &nbsp;|&nbsp; 🧤 Click the glowing fielder to make the play on defense!</p>
                 </div>
             </div>
         </section>
@@ -111,7 +111,7 @@
         const PIRATES = ['B. Schwartz','N. Marrero','N. Fishman','D. Brookfield','J. Shikora','M. Billig','N. Melluzzo','J. Roop','K. Ohanian','K. Rumph','Z. Santomauro','A. Small','T. Elkin','S. O\'Keefe','N. Braica','I. Sales','B. Rijo','D. Search-Wells','B. Benulis','N. Packard','C. Holland','J. Fishman'];
         const OPPONENTS = ['R. Johnson','M. Williams','T. Davis','C. Martinez','J. Anderson','P. Thomas','L. Jackson','S. White','D. Harris','B. Clark','K. Lewis','A. Robinson','J. Walker','M. Young','T. Allen','R. King','C. Wright','D. Lopez'];
 
-        let gameState = 'idle'; // idle, pitching, swingable, result, gameOver
+        let gameState = 'idle'; // idle, pitching, swingable, result, fielding, gameOver
         let inning = 1, halfInning = 0; // 0=top, 1=bottom
         let scores = [0, 0]; // [opponent, pirates]
         let outs = 0, strikes = 0, balls = 0;
@@ -124,6 +124,21 @@
         let hitBall = null;
         let announceText = '', announceTimer = 0;
         let frameId = null;
+
+        // Defensive positions {label, x, y}
+        const FIELD_POS = [
+            {label:'P',  x:400, y:280},
+            {label:'C',  x:400, y:395},
+            {label:'1B', x:490, y:310},
+            {label:'2B', x:450, y:255},
+            {label:'SS', x:345, y:255},
+            {label:'3B', x:310, y:310},
+            {label:'LF', x:220, y:160},
+            {label:'CF', x:400, y:110},
+            {label:'RF', x:580, y:160}
+        ];
+        // Fielding mechanic state
+        let fieldingState = null; // {targetIdx, ballX, ballY, timer, pendingResult, pendingRuns, pendingBases}
 
         const ZONE = {x:360, y:340, w:80, h:90};
 
@@ -228,6 +243,28 @@
             ctx.rotate(swinging ? -1.5+swingFrame*0.4 : -0.8);
             ctx.fillStyle='#8B4513';ctx.fillRect(0,-2,40,4);
             ctx.restore();
+        }
+
+        function drawFielders(){
+            const team = isPiratesBatting() ? OPPONENTS : PIRATES;
+            FIELD_POS.forEach(function(pos, i){
+                const isTarget = fieldingState && fieldingState.targetIdx === i;
+                // body
+                ctx.fillStyle = isPiratesBatting() ? '#ff6666' : 'var(--gold, #FFB300)';
+                ctx.beginPath();ctx.arc(pos.x, pos.y, 7, 0, Math.PI*2);ctx.fill();
+                // glow if target
+                if(isTarget && gameState==='fielding'){
+                    ctx.strokeStyle='#fff';ctx.lineWidth=3;
+                    ctx.beginPath();ctx.arc(pos.x, pos.y, 13+Math.sin(Date.now()*0.01)*3, 0, Math.PI*2);ctx.stroke();
+                }
+                // label
+                ctx.font='bold 9px Oswald, sans-serif';ctx.fillStyle='#fff';ctx.textAlign='center';
+                ctx.fillText(pos.label, pos.x, pos.y+18);
+                // player name
+                ctx.font='8px Roboto, sans-serif';ctx.fillStyle='rgba(255,255,255,0.7)';
+                ctx.fillText(team[i % team.length], pos.x, pos.y+27);
+                ctx.textAlign='left';
+            });
         }
 
         function drawHitBall(){
@@ -342,42 +379,56 @@
             const rand = Math.random();
 
             if(rand < 0.15 * quality){
-                // HOME RUN
+                // HOME RUN — no fielding possible
                 let runs = advanceRunners(4);
                 scores[halfInning===0?0:1] += runs;
                 hitBall={x:ball.x,y:ball.y,vx:(Math.random()-0.5)*6,vy:-8,t:0};
                 announce('💣 HOME RUN! +'+runs+' run'+(runs>1?'s':'')+'!');
                 nextBatter();
-            } else if(rand < 0.20 + 0.15*quality){
-                // Triple
-                let runs = advanceRunners(3);
-                scores[halfInning===0?0:1] += runs;
-                runners[2]=true;runners[0]=false;
-                hitBall={x:ball.x,y:ball.y,vx:(Math.random()>0.5?5:-5),vy:-5,t:0};
-                announce('Triple! +'+runs+' run'+(runs!==1?'s':''));
-                nextBatter();
-            } else if(rand < 0.35 + 0.1*quality){
-                // Double
-                let runs = advanceRunners(2);
-                scores[halfInning===0?0:1] += runs;
-                runners[1]=true;runners[0]=false;
-                hitBall={x:ball.x,y:ball.y,vx:(Math.random()-0.5)*5,vy:-5,t:0};
-                announce('Double! +'+runs+' run'+(runs!==1?'s':''));
-                nextBatter();
-            } else if(rand < 0.55 + 0.1*quality){
-                // Single
-                let runs = advanceRunners(1);
-                scores[halfInning===0?0:1] += runs;
-                hitBall={x:ball.x,y:ball.y,vx:(Math.random()-0.5)*4,vy:-4,t:0};
-                announce('Base hit! '+(runs>0?'+'+runs+' run'+(runs!==1?'s':''):''));
-                nextBatter();
-            } else {
-                // Out
-                hitBall={x:ball.x,y:ball.y,vx:(Math.random()-0.5)*3,vy:-3,t:0};
-                announce(Math.random()>0.5?'Fly out!':'Ground out!');
-                recordOut();nextBatter();
+                gameState='result';resultTimer=70;
+                return;
             }
-            gameState='result';resultTimer=70;
+
+            // For non-HR results when Pirates are fielding, enter fielding mode
+            let pendingResult, pendingBases, targetIdx;
+            if(rand < 0.20 + 0.15*quality){
+                pendingResult='triple';pendingBases=3;
+                targetIdx = Math.random()>0.5 ? 6 : 8; // LF or RF
+            } else if(rand < 0.35 + 0.1*quality){
+                pendingResult='double';pendingBases=2;
+                targetIdx = [6,7,8][Math.floor(Math.random()*3)]; // outfield
+            } else if(rand < 0.55 + 0.1*quality){
+                pendingResult='single';pendingBases=1;
+                targetIdx = [2,3,4,5][Math.floor(Math.random()*4)]; // infield
+            } else {
+                pendingResult='out';pendingBases=0;
+                targetIdx = [0,2,3,4,5,6,7,8][Math.floor(Math.random()*8)];
+            }
+
+            const tgt = FIELD_POS[targetIdx];
+            hitBall={x:ball.x,y:ball.y,vx:(tgt.x-ball.x)/30,vy:(tgt.y-ball.y)/30,t:0};
+
+            if(isPiratesBatting()){
+                // Pirates batting — no defensive mini-game, resolve immediately
+                if(pendingResult==='out'){
+                    announce(Math.random()>0.5?'Fly out!':'Ground out!');
+                    recordOut();nextBatter();
+                } else {
+                    let runs = advanceRunners(pendingBases);
+                    scores[1] += runs;
+                    if(pendingResult==='triple'){runners=[false,false,true];}
+                    if(pendingResult==='double'){runners[1]=true;runners[0]=false;}
+                    let label = pendingResult==='single'?'Base hit!':pendingResult==='double'?'Double!':'Triple!';
+                    announce(label+(runs>0?' +'+runs+' run'+(runs!==1?'s':''):''));
+                    nextBatter();
+                }
+                gameState='result';resultTimer=70;
+            } else {
+                // Opponents batting — player fields!
+                announce('⚾ FIELD IT! Click the glowing fielder!');
+                fieldingState = {targetIdx:targetIdx, timer:90, pendingResult:pendingResult, pendingBases:pendingBases};
+                gameState='fielding';
+            }
         }
 
         function autoSwing(){
@@ -386,6 +437,32 @@
             if(inZone && Math.random()<0.65){
                 doSwing();
             }
+        }
+
+        function resolveFielding(caught){
+            if(!fieldingState) return;
+            const fs = fieldingState;
+            if(caught){
+                // Player made the play — it's an out regardless of pending result
+                announce(Math.random()>0.5?'Great catch! OUT!':'Nice play! OUT!');
+                recordOut();nextBatter();
+            } else {
+                // Hit goes through
+                if(fs.pendingResult==='out'){
+                    announce(Math.random()>0.5?'Fly out!':'Ground out!');
+                    recordOut();nextBatter();
+                } else {
+                    let runs = advanceRunners(fs.pendingBases);
+                    scores[0] += runs;
+                    if(fs.pendingResult==='triple'){runners=[false,false,true];}
+                    if(fs.pendingResult==='double'){runners[1]=true;runners[0]=false;}
+                    let label = fs.pendingResult==='single'?'Base hit!':fs.pendingResult==='double'?'Double!':'Triple!';
+                    announce(label+(runs>0?' +'+runs+' run'+(runs!==1?'s':''):''));
+                    nextBatter();
+                }
+            }
+            fieldingState=null;
+            gameState='result';resultTimer=60;
         }
 
         function update(){
@@ -426,6 +503,14 @@
                 if(hitBall.t>60) hitBall=null;
             }
 
+            if(gameState==='fielding'&&fieldingState){
+                fieldingState.timer--;
+                if(fieldingState.timer<=0){
+                    // Time ran out — hit goes through
+                    resolveFielding(false);
+                }
+            }
+
             if(gameState==='result'){
                 resultTimer--;
                 if(resultTimer<=0){
@@ -439,6 +524,7 @@
 
         function render(){
             drawDiamond();
+            drawFielders();
             drawStrikeZone();
             if(gameState!=='idle'&&gameState!=='gameOver') drawBall();
             drawBatter();
@@ -446,6 +532,15 @@
             drawScoreboard();
             drawAnnounce();
             if(gameState==='gameOver') drawGameOver();
+            // Fielding timer bar
+            if(gameState==='fielding'&&fieldingState){
+                const pct = fieldingState.timer/90;
+                ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(300,460,200,16);
+                ctx.fillStyle=pct>0.4?'#00ff88':'#ff4444';ctx.fillRect(300,460,200*pct,16);
+                ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.strokeRect(300,460,200,16);
+                ctx.font='bold 11px Oswald, sans-serif';ctx.fillStyle='#fff';ctx.textAlign='center';
+                ctx.fillText('FIELD IT!',400,473);ctx.textAlign='left';
+            }
         }
 
         function loop(){
@@ -458,7 +553,7 @@
         function startGame(){
             inning=1;halfInning=0;scores=[0,0];outs=0;strikes=0;balls=0;
             batterIndex=[0,0];runners=[false,false,false];
-            hitBall=null;gameState='pitching';
+            hitBall=null;fieldingState=null;gameState='pitching';
             announce('Play ball! Top of inning 1');
             // Shuffle lineups
             for(let i=PIRATES.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[PIRATES[i],PIRATES[j]]=[PIRATES[j],PIRATES[i]];}
@@ -468,13 +563,31 @@
             loop();
         }
 
-        canvas.addEventListener('click', function(e){
-            if(gameState==='pitching'&&isPiratesBatting()) doSwing();
-        });
-        canvas.addEventListener('touchstart', function(e){
-            e.preventDefault();
-            if(gameState==='pitching'&&isPiratesBatting()) doSwing();
-        });
+        function getCanvasPos(e){
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = 800/rect.width, scaleY = 500/rect.height;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {x:(clientX-rect.left)*scaleX, y:(clientY-rect.top)*scaleY};
+        }
+        function handleInput(e){
+            if(e.type==='touchstart') e.preventDefault();
+            if(gameState==='pitching'&&isPiratesBatting()){
+                doSwing();
+            } else if(gameState==='fielding'&&fieldingState){
+                const pos = getCanvasPos(e);
+                const tgt = FIELD_POS[fieldingState.targetIdx];
+                const dist = Math.sqrt((pos.x-tgt.x)**2+(pos.y-tgt.y)**2);
+                if(dist < 35){
+                    resolveFielding(true);
+                } else {
+                    // Clicked wrong spot — hit goes through
+                    resolveFielding(false);
+                }
+            }
+        }
+        canvas.addEventListener('click', handleInput);
+        canvas.addEventListener('touchstart', handleInput);
 
         startBtn.addEventListener('click', startGame);
 
