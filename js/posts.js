@@ -1,19 +1,22 @@
-// Player Posts - localStorage-based posts with likes and comments
+// Player Posts - Firebase Realtime Database backed posts with likes and comments
 (function() {
     'use strict';
 
-    const STORAGE_KEY = 'baystate_pirates_posts';
+    var postsRef = db.ref('posts');
 
-    function getPosts() {
+    // Track which posts the current browser session has liked (persisted in localStorage)
+    var LIKES_KEY = 'baystate_pirates_liked';
+
+    function getLikedSet() {
         try {
-            return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            return JSON.parse(localStorage.getItem(LIKES_KEY)) || {};
         } catch (e) {
-            return [];
+            return {};
         }
     }
 
-    function savePosts(posts) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+    function saveLikedSet(liked) {
+        localStorage.setItem(LIKES_KEY, JSON.stringify(liked));
     }
 
     function getInitials(name) {
@@ -47,28 +50,44 @@
         }
     }
 
-    function renderPosts() {
+    function renderPosts(postsObj) {
         var feed = document.getElementById('postsFeed');
-        var posts = getPosts();
+        var liked = getLikedSet();
 
-        if (posts.length === 0) {
+        // Convert object to array with keys
+        var postsArray = [];
+        if (postsObj) {
+            Object.keys(postsObj).forEach(function(key) {
+                var post = postsObj[key];
+                post._key = key;
+                postsArray.push(post);
+            });
+        }
+
+        if (postsArray.length === 0) {
             feed.innerHTML = '<div class="no-posts"><p>No posts yet. Be the first to share something!</p></div>';
             return;
         }
 
-        // Show newest first
+        // Sort newest first by timestamp
+        postsArray.sort(function(a, b) {
+            return (b.timestamp || 0) - (a.timestamp || 0);
+        });
+
         var html = '';
-        for (var i = posts.length - 1; i >= 0; i--) {
-            var post = posts[i];
-            html += renderPostCard(post, i);
+        for (var i = 0; i < postsArray.length; i++) {
+            var post = postsArray[i];
+            var isLiked = !!liked[post._key];
+            html += renderPostCard(post, isLiked);
         }
         feed.innerHTML = html;
 
-        // Attach event listeners
         attachPostListeners();
     }
 
-    function renderPostCard(post, index) {
+    function renderPostCard(post, isLiked) {
+        var key = post._key;
+
         var linkHtml = '';
         if (post.link && isValidUrl(post.link)) {
             var displayUrl = post.link.length > 50 ? post.link.substring(0, 50) + '...' : post.link;
@@ -76,29 +95,39 @@
                 '&#128279; ' + escapeHtml(displayUrl) + '</a>';
         }
 
-        var likeClass = post.likedByMe ? 'btn-like liked' : 'btn-like';
+        var likeClass = isLiked ? 'btn-like liked' : 'btn-like';
         var likeCount = post.likes || 0;
-        var commentCount = (post.comments || []).length;
+
+        // Convert comments object to array
+        var commentsArray = [];
+        if (post.comments) {
+            Object.keys(post.comments).forEach(function(ck) {
+                commentsArray.push(post.comments[ck]);
+            });
+            // Sort comments oldest first
+            commentsArray.sort(function(a, b) {
+                return (a.timestamp || 0) - (b.timestamp || 0);
+            });
+        }
+        var commentCount = commentsArray.length;
 
         var commentsHtml = '';
-        if (post.comments && post.comments.length > 0) {
-            for (var c = 0; c < post.comments.length; c++) {
-                var comment = post.comments[c];
-                commentsHtml += '<div class="comment">' +
-                    '<div class="comment-avatar">' + escapeHtml(getInitials(comment.author)) + '</div>' +
-                    '<div class="comment-content">' +
-                    '<span class="comment-author">' + escapeHtml(comment.author) + '</span> ' +
-                    '<span class="comment-text">' + escapeHtml(comment.text) + '</span>' +
-                    '<div class="comment-time">' + timeAgo(comment.timestamp) + '</div>' +
-                    '</div></div>';
-            }
+        for (var c = 0; c < commentsArray.length; c++) {
+            var comment = commentsArray[c];
+            commentsHtml += '<div class="comment">' +
+                '<div class="comment-avatar">' + escapeHtml(getInitials(comment.author || '?')) + '</div>' +
+                '<div class="comment-content">' +
+                '<span class="comment-author">' + escapeHtml(comment.author || 'Anon') + '</span> ' +
+                '<span class="comment-text">' + escapeHtml(comment.text) + '</span>' +
+                '<div class="comment-time">' + timeAgo(comment.timestamp) + '</div>' +
+                '</div></div>';
         }
 
-        return '<div class="post-card" data-index="' + index + '">' +
+        return '<div class="post-card" data-key="' + escapeHtml(key) + '">' +
             '<div class="post-header">' +
-            '<div class="post-avatar">' + escapeHtml(getInitials(post.author)) + '</div>' +
+            '<div class="post-avatar">' + escapeHtml(getInitials(post.author || '?')) + '</div>' +
             '<div class="post-meta">' +
-            '<div class="post-author">' + escapeHtml(post.author) + '</div>' +
+            '<div class="post-author">' + escapeHtml(post.author || 'Unknown') + '</div>' +
             '<div class="post-time">' + timeAgo(post.timestamp) + '</div>' +
             '</div></div>' +
             '<div class="post-body">' +
@@ -106,18 +135,18 @@
             linkHtml +
             '</div>' +
             '<div class="post-actions">' +
-            '<button class="' + likeClass + '" data-action="like" data-index="' + index + '">' +
+            '<button class="' + likeClass + '" data-action="like" data-key="' + escapeHtml(key) + '">' +
             '&#9829; ' + likeCount +
             '</button>' +
-            '<button class="btn-comment-toggle" data-action="toggle-comments" data-index="' + index + '">' +
+            '<button class="btn-comment-toggle" data-action="toggle-comments" data-key="' + escapeHtml(key) + '">' +
             '&#128172; ' + commentCount + ' Comment' + (commentCount !== 1 ? 's' : '') +
             '</button>' +
             '</div>' +
-            '<div class="comments-section" id="comments-' + index + '">' +
+            '<div class="comments-section" id="comments-' + escapeHtml(key) + '">' +
             commentsHtml +
             '<div class="add-comment">' +
-            '<input type="text" placeholder="Add a comment..." data-comment-input="' + index + '">' +
-            '<button data-action="add-comment" data-index="' + index + '">Post</button>' +
+            '<input type="text" placeholder="Add a comment..." data-comment-input="' + escapeHtml(key) + '">' +
+            '<button data-action="add-comment" data-key="' + escapeHtml(key) + '">Post</button>' +
             '</div></div></div>';
     }
 
@@ -125,16 +154,16 @@
         // Like buttons
         document.querySelectorAll('[data-action="like"]').forEach(function(btn) {
             btn.addEventListener('click', function() {
-                var index = parseInt(this.getAttribute('data-index'));
-                toggleLike(index);
+                var key = this.getAttribute('data-key');
+                toggleLike(key);
             });
         });
 
         // Comment toggle buttons
         document.querySelectorAll('[data-action="toggle-comments"]').forEach(function(btn) {
             btn.addEventListener('click', function() {
-                var index = this.getAttribute('data-index');
-                var section = document.getElementById('comments-' + index);
+                var key = this.getAttribute('data-key');
+                var section = document.getElementById('comments-' + key);
                 section.classList.toggle('open');
                 if (section.classList.contains('open')) {
                     var input = section.querySelector('input');
@@ -146,8 +175,8 @@
         // Add comment buttons
         document.querySelectorAll('[data-action="add-comment"]').forEach(function(btn) {
             btn.addEventListener('click', function() {
-                var index = parseInt(this.getAttribute('data-index'));
-                addComment(index);
+                var key = this.getAttribute('data-key');
+                addComment(key);
             });
         });
 
@@ -155,29 +184,35 @@
         document.querySelectorAll('[data-comment-input]').forEach(function(input) {
             input.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') {
-                    var index = parseInt(this.getAttribute('data-comment-input'));
-                    addComment(index);
+                    var key = this.getAttribute('data-comment-input');
+                    addComment(key);
                 }
             });
         });
     }
 
-    function toggleLike(index) {
-        var posts = getPosts();
-        if (!posts[index]) return;
-        if (posts[index].likedByMe) {
-            posts[index].likes = Math.max(0, (posts[index].likes || 1) - 1);
-            posts[index].likedByMe = false;
+    function toggleLike(key) {
+        var liked = getLikedSet();
+        var postLikesRef = postsRef.child(key).child('likes');
+
+        if (liked[key]) {
+            // Unlike: decrement
+            postLikesRef.transaction(function(current) {
+                return Math.max(0, (current || 1) - 1);
+            });
+            delete liked[key];
         } else {
-            posts[index].likes = (posts[index].likes || 0) + 1;
-            posts[index].likedByMe = true;
+            // Like: increment
+            postLikesRef.transaction(function(current) {
+                return (current || 0) + 1;
+            });
+            liked[key] = true;
         }
-        savePosts(posts);
-        renderPosts();
+        saveLikedSet(liked);
     }
 
-    function addComment(index) {
-        var input = document.querySelector('[data-comment-input="' + index + '"]');
+    function addComment(key) {
+        var input = document.querySelector('[data-comment-input="' + key + '"]');
         var text = input.value.trim();
         if (!text) return;
 
@@ -190,20 +225,20 @@
             sessionStorage.setItem('pirates_commenter', commenterName);
         }
 
-        var posts = getPosts();
-        if (!posts[index]) return;
-        if (!posts[index].comments) posts[index].comments = [];
-        posts[index].comments.push({
+        var commentsRef = postsRef.child(key).child('comments');
+        commentsRef.push({
             author: commenterName,
             text: text,
-            timestamp: Date.now()
+            timestamp: firebase.database.ServerValue.TIMESTAMP
         });
-        savePosts(posts);
-        renderPosts();
 
-        // Re-open the comments section after re-render
-        var section = document.getElementById('comments-' + index);
-        if (section) section.classList.add('open');
+        input.value = '';
+
+        // Re-open the comments section after next render
+        setTimeout(function() {
+            var section = document.getElementById('comments-' + key);
+            if (section) section.classList.add('open');
+        }, 300);
     }
 
     // Submit new post
@@ -226,17 +261,14 @@
             return;
         }
 
-        var posts = getPosts();
-        posts.push({
+        postsRef.push({
             author: name,
             text: text,
             link: link || '',
-            timestamp: Date.now(),
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
             likes: 0,
-            likedByMe: false,
-            comments: []
+            comments: {}
         });
-        savePosts(posts);
 
         // Remember the name for comments
         sessionStorage.setItem('pirates_commenter', name);
@@ -244,10 +276,14 @@
         // Clear form
         document.getElementById('postText').value = '';
         document.getElementById('postLink').value = '';
-
-        renderPosts();
     });
 
-    // Initial render
-    renderPosts();
+    // Listen for real-time updates from Firebase
+    postsRef.on('value', function(snapshot) {
+        var data = snapshot.val();
+        renderPosts(data);
+    });
+
+    // Show loading state initially
+    document.getElementById('postsFeed').innerHTML = '<div class="no-posts"><p>Loading posts...</p></div>';
 })();
