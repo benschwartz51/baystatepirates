@@ -48,6 +48,8 @@
                 <div class="stats-embed-container">
                     <iframe src="https://web.gc.com/teams/jhNFIsRAEnw2/2026-spring-bay-state-pirates/season-stats" title="Bay State Pirates Season Stats"></iframe>
                 </div>
+
+                <div id="gc-schedule-widget-yt5j" style="margin-top: 40px;"></div>
             </div>
         </section>
     </main>
@@ -62,5 +64,13 @@
     </footer>
 
     <script src="js/nav.js"></script>
+    <script src="https://widgets.gc.com/static/js/sdk.v1.js"></script>
+    <script>
+        window.GC.team.schedule.init({
+            target: "#gc-schedule-widget-yt5j",
+            widgetId: "3f5093ce-81dc-4937-b6c0-96f8eb6ce3dc",
+            maxVerticalGamesVisible: 4,
+        })
+    </script>
 </body>
 </html>
