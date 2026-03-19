@@ -90,7 +90,397 @@
                 </div>
             </div>
         </section>
+        <section class="game-section" style="padding: 40px 0;">
+            <div class="container">
+                <h2 style="text-align:center; color: var(--gold); font-family: 'Oswald', sans-serif; font-size: 2rem; margin-bottom: 20px;">⚾ Pirates Arcade ⚾</h2>
+                <canvas id="baseballGame" width="800" height="500" style="display:block; margin:0 auto; background:#2d7a3a; border:3px solid var(--gold); border-radius:8px; max-width:100%; cursor:pointer;"></canvas>
+                <div id="gameControls" style="text-align:center; margin-top:15px;">
+                    <button id="startBtn" style="background:var(--gold); color:#000; border:none; padding:12px 30px; font-family:'Oswald',sans-serif; font-size:1.1rem; border-radius:5px; cursor:pointer; font-weight:600;">⚾ PLAY BALL!</button>
+                    <p style="color:#ccc; font-size:0.85rem; margin-top:8px;">Click/tap to swing when the pitch is in the zone!</p>
+                </div>
+            </div>
+        </section>
     </main>
+
+    <script>
+    (function(){
+        const canvas = document.getElementById('baseballGame');
+        const ctx = canvas.getContext('2d');
+        const startBtn = document.getElementById('startBtn');
+
+        const PIRATES = ['B. Schwartz','N. Marrero','N. Fishman','D. Brookfield','J. Shikora','M. Billig','N. Melluzzo','J. Roop','K. Ohanian','K. Rumph','Z. Santomauro','A. Small','T. Elkin','S. O\'Keefe','N. Braica','I. Sales','B. Rijo','D. Search-Wells'];
+        const OPPONENTS = ['R. Johnson','M. Williams','T. Davis','C. Martinez','J. Anderson','P. Thomas','L. Jackson','S. White','D. Harris','B. Clark','K. Lewis','A. Robinson','J. Walker','M. Young','T. Allen','R. King','C. Wright','D. Lopez'];
+
+        let gameState = 'idle'; // idle, pitching, swingable, result, gameOver
+        let inning = 1, halfInning = 0; // 0=top, 1=bottom
+        let scores = [0, 0]; // [opponent, pirates]
+        let outs = 0, strikes = 0, balls = 0;
+        let batterIndex = [0, 0];
+        let ball = {x:400, y:80, vx:0, vy:0, size:8};
+        let swingResult = '', resultTimer = 0;
+        let pitchSpeed = 0, pitchCurve = 0;
+        let batAngle = 0, swinging = false, swingFrame = 0;
+        let runners = [false,false,false]; // 1st, 2nd, 3rd
+        let hitBall = null;
+        let announceText = '', announceTimer = 0;
+        let frameId = null;
+
+        const ZONE = {x:360, y:340, w:80, h:90};
+
+        function resize(){
+            const r = canvas.parentElement.clientWidth / 800;
+            if(r < 1){
+                canvas.style.width = (800*r)+'px';
+                canvas.style.height = (500*r)+'px';
+            }
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        function currentTeamBatting(){ return halfInning; } // 0=opponents bat, 1=pirates bat
+        function battingTeam(){ return halfInning === 1 ? PIRATES : OPPONENTS; }
+        function currentBatter(){ return battingTeam()[batterIndex[halfInning] % battingTeam().length]; }
+        function isPiratesBatting(){ return halfInning === 1; }
+
+        function drawDiamond(){
+            ctx.clearRect(0,0,800,500);
+            // grass
+            ctx.fillStyle = '#2d7a3a';
+            ctx.fillRect(0,0,800,500);
+            // dirt infield
+            ctx.fillStyle = '#c4956a';
+            ctx.beginPath();
+            ctx.moveTo(400,380);ctx.lineTo(500,300);ctx.lineTo(400,220);ctx.lineTo(300,300);ctx.closePath();ctx.fill();
+            // grass cutout
+            ctx.fillStyle='#2d7a3a';
+            ctx.beginPath();ctx.arc(400,305,40,0,Math.PI*2);ctx.fill();
+            // bases
+            ctx.fillStyle='#fff';
+            [[400,380],[500,300],[400,220],[300,300]].forEach(function(b,i){
+                ctx.save();ctx.translate(b[0],b[1]);ctx.rotate(Math.PI/4);
+                if(i===0){ctx.fillStyle='#fff';ctx.fillRect(-10,-10,20,20);}
+                else{
+                    ctx.fillStyle = runners[i-1]?'var(--gold, #FFB300)':'#fff';
+                    ctx.fillRect(-8,-8,16,16);
+                }
+                ctx.restore();
+            });
+            // mound
+            ctx.fillStyle='#c4956a';
+            ctx.beginPath();ctx.arc(400,280,12,0,Math.PI*2);ctx.fill();
+            ctx.fillStyle='#fff';ctx.fillRect(395,277,10,6);
+            // foul lines
+            ctx.strokeStyle='#fff';ctx.lineWidth=2;
+            ctx.beginPath();ctx.moveTo(400,380);ctx.lineTo(100,80);ctx.stroke();
+            ctx.beginPath();ctx.moveTo(400,380);ctx.lineTo(700,80);ctx.stroke();
+            // outfield wall
+            ctx.strokeStyle='#1a5c28';ctx.lineWidth=6;
+            ctx.beginPath();ctx.arc(400,380,340,Math.PI+0.3,2*Math.PI-0.3);ctx.stroke();
+        }
+
+        function drawScoreboard(){
+            ctx.fillStyle='rgba(0,0,0,0.85)';
+            ctx.fillRect(10,10,260,90);
+            ctx.strokeStyle='var(--gold, #FFB300)';ctx.lineWidth=2;
+            ctx.strokeRect(10,10,260,90);
+            ctx.font='bold 13px Oswald, sans-serif';
+            ctx.fillStyle='#fff';
+            ctx.fillText('INNING', 160, 28);
+            ctx.fillText(inning + (inning===10?'':'') + (halfInning===0?' ▲':' ▼'), 220, 28);
+            ctx.fillStyle='#aaa';ctx.fillText('Visitors', 20, 50);
+            ctx.fillStyle='var(--gold, #FFB300)';ctx.fillText('PIRATES', 20, 72);
+            ctx.font='bold 18px Oswald, sans-serif';
+            ctx.fillStyle='#fff';ctx.fillText(scores[0], 120, 52);
+            ctx.fillStyle='var(--gold, #FFB300)';ctx.fillText(scores[1], 120, 74);
+            // count
+            ctx.font='13px Oswald, sans-serif';ctx.fillStyle='#fff';
+            ctx.fillText('B: '+balls+'  S: '+strikes+'  O: '+outs, 160, 52);
+            // batter
+            ctx.font='12px Roboto, sans-serif';ctx.fillStyle='#ccc';
+            ctx.fillText('AB: '+currentBatter(), 160, 72);
+            // batting indicator
+            if(halfInning===0){ctx.fillStyle='#ff4444';ctx.fillRect(14,42,4,14);}
+            else{ctx.fillStyle='var(--gold, #FFB300)';ctx.fillRect(14,62,4,14);}
+        }
+
+        function drawStrikeZone(){
+            ctx.strokeStyle='rgba(255,255,255,0.25)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+            ctx.strokeRect(ZONE.x,ZONE.y,ZONE.w,ZONE.h);
+            ctx.setLineDash([]);
+        }
+
+        function drawBall(){
+            if(ball.y > 500) return;
+            ctx.fillStyle='#fff';
+            ctx.beginPath();ctx.arc(ball.x,ball.y,ball.size,0,Math.PI*2);ctx.fill();
+            ctx.strokeStyle='#cc0000';ctx.lineWidth=1.5;
+            ctx.beginPath();ctx.arc(ball.x,ball.y,ball.size-2,0.5,2);ctx.stroke();
+            ctx.beginPath();ctx.arc(ball.x,ball.y,ball.size-2,3.5,5);ctx.stroke();
+        }
+
+        function drawBatter(){
+            const bx = 470, by = 380;
+            ctx.fillStyle = isPiratesBatting() ? 'var(--gold, #FFB300)' : '#ff6666';
+            ctx.beginPath();ctx.arc(bx,by-35,8,0,Math.PI*2);ctx.fill(); // head
+            ctx.fillRect(bx-4,by-27,8,22); // body
+            // bat
+            ctx.save();ctx.translate(bx-5,by-20);
+            ctx.rotate(swinging ? -1.5+swingFrame*0.4 : -0.8);
+            ctx.fillStyle='#8B4513';ctx.fillRect(0,-2,40,4);
+            ctx.restore();
+        }
+
+        function drawHitBall(){
+            if(!hitBall) return;
+            ctx.fillStyle='#fff';
+            ctx.beginPath();ctx.arc(hitBall.x,hitBall.y,6-hitBall.t*0.03,0,Math.PI*2);ctx.fill();
+        }
+
+        function drawAnnounce(){
+            if(announceTimer <= 0) return;
+            ctx.fillStyle='rgba(0,0,0,0.7)';
+            ctx.fillRect(200,180,400,60);
+            ctx.strokeStyle='var(--gold, #FFB300)';ctx.lineWidth=2;ctx.strokeRect(200,180,400,60);
+            ctx.font='bold 22px Oswald, sans-serif';ctx.fillStyle='#fff';ctx.textAlign='center';
+            ctx.fillText(announceText,400,218);
+            ctx.textAlign='left';
+        }
+
+        function drawGameOver(){
+            ctx.fillStyle='rgba(0,0,0,0.8)';ctx.fillRect(150,120,500,260);
+            ctx.strokeStyle='var(--gold, #FFB300)';ctx.lineWidth=3;ctx.strokeRect(150,120,500,260);
+            ctx.font='bold 36px Oswald, sans-serif';ctx.textAlign='center';
+            ctx.fillStyle='var(--gold, #FFB300)';ctx.fillText('FINAL SCORE',400,175);
+            ctx.font='bold 28px Oswald, sans-serif';
+            ctx.fillStyle='#fff';ctx.fillText('Visitors: '+scores[0],400,225);
+            ctx.fillStyle='var(--gold, #FFB300)';ctx.fillText('PIRATES: '+scores[1],400,265);
+            ctx.font='bold 24px Oswald, sans-serif';
+            if(scores[1]>scores[0]){ctx.fillStyle='#00ff88';ctx.fillText('⚾ PIRATES WIN! ⚾',400,315);}
+            else if(scores[0]>scores[1]){ctx.fillStyle='#ff6666';ctx.fillText('Better luck next time!',400,315);}
+            else{ctx.fillStyle='#ffff00';ctx.fillText('TIE GAME!',400,315);}
+            ctx.font='14px Roboto, sans-serif';ctx.fillStyle='#ccc';ctx.fillText('Click "PLAY BALL!" to play again',400,350);
+            ctx.textAlign='left';
+        }
+
+        function drawIdle(){
+            drawDiamond();
+            ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(200,150,400,120);
+            ctx.strokeStyle='var(--gold, #FFB300)';ctx.lineWidth=2;ctx.strokeRect(200,150,400,120);
+            ctx.font='bold 30px Oswald, sans-serif';ctx.textAlign='center';
+            ctx.fillStyle='var(--gold, #FFB300)';ctx.fillText('⚾ PIRATES BASEBALL ⚾',400,200);
+            ctx.font='16px Roboto, sans-serif';ctx.fillStyle='#fff';
+            ctx.fillText('Click PLAY BALL to start a 3-inning game!',400,240);
+            ctx.textAlign='left';
+        }
+
+        function pitch(){
+            gameState='pitching';
+            ball.x = 400 + (Math.random()*40-20);
+            ball.y = 80;
+            pitchSpeed = 3 + Math.random()*2;
+            pitchCurve = (Math.random()-0.5)*1.5;
+            ball.vy = pitchSpeed;
+            ball.vx = pitchCurve;
+            swinging = false; swingFrame = 0;
+        }
+
+        function advanceRunners(bases){
+            let runsScored = 0;
+            for(let i=0;i<bases;i++){
+                if(runners[2]) runsScored++;
+                runners[2]=runners[1];
+                runners[1]=runners[0];
+                runners[0]=false;
+            }
+            if(bases>=4){runsScored+=(runners[2]?1:0)+(runners[1]?1:0)+(runners[0]?1:0)+1;runners=[false,false,false];}
+            else{runners[0]=true;}
+            return runsScored;
+        }
+
+        function recordOut(){
+            outs++;
+            if(outs>=3){
+                outs=0;strikes=0;balls=0;
+                runners=[false,false,false];
+                if(halfInning===1){
+                    inning++;
+                    if(inning>3){
+                        if(scores[0]!==scores[1]||inning>5){
+                            gameState='gameOver';return;
+                        }
+                    }
+                }
+                halfInning = halfInning===0?1:0;
+                announce((halfInning===0?'Top':'Bottom')+' of inning '+inning);
+            }
+        }
+
+        function nextBatter(){
+            batterIndex[halfInning]++;
+            strikes=0;balls=0;
+        }
+
+        function announce(txt){
+            announceText=txt;announceTimer=90;
+        }
+
+        function doSwing(){
+            if(gameState!=='pitching'&&gameState!=='swingable') return;
+            swinging=true;swingFrame=0;
+            const inZone = ball.x>ZONE.x-10&&ball.x<ZONE.x+ZONE.w+10&&ball.y>ZONE.y-10&&ball.y<ZONE.y+ZONE.h+10;
+            const timing = Math.abs(ball.y - (ZONE.y+ZONE.h/2));
+
+            if(!inZone||timing>60){
+                strikes++;
+                announce('Strike'+(strikes>=3?' three — OUT!':'!'));
+                if(strikes>=3){recordOut();nextBatter();}
+                gameState='result';resultTimer=50;
+                return;
+            }
+
+            const quality = 1 - timing/60;
+            const rand = Math.random();
+
+            if(rand < 0.15 * quality){
+                // HOME RUN
+                let runs = advanceRunners(4);
+                scores[halfInning===0?0:1] += runs;
+                hitBall={x:ball.x,y:ball.y,vx:(Math.random()-0.5)*6,vy:-8,t:0};
+                announce('💣 HOME RUN! +'+runs+' run'+(runs>1?'s':'')+'!');
+                nextBatter();
+            } else if(rand < 0.20 + 0.15*quality){
+                // Triple
+                let runs = advanceRunners(3);
+                scores[halfInning===0?0:1] += runs;
+                runners[2]=true;runners[0]=false;
+                hitBall={x:ball.x,y:ball.y,vx:(Math.random()>0.5?5:-5),vy:-5,t:0};
+                announce('Triple! +'+runs+' run'+(runs!==1?'s':''));
+                nextBatter();
+            } else if(rand < 0.35 + 0.1*quality){
+                // Double
+                let runs = advanceRunners(2);
+                scores[halfInning===0?0:1] += runs;
+                runners[1]=true;runners[0]=false;
+                hitBall={x:ball.x,y:ball.y,vx:(Math.random()-0.5)*5,vy:-5,t:0};
+                announce('Double! +'+runs+' run'+(runs!==1?'s':''));
+                nextBatter();
+            } else if(rand < 0.55 + 0.1*quality){
+                // Single
+                let runs = advanceRunners(1);
+                scores[halfInning===0?0:1] += runs;
+                hitBall={x:ball.x,y:ball.y,vx:(Math.random()-0.5)*4,vy:-4,t:0};
+                announce('Base hit! '+(runs>0?'+'+runs+' run'+(runs!==1?'s':''):''));
+                nextBatter();
+            } else {
+                // Out
+                hitBall={x:ball.x,y:ball.y,vx:(Math.random()-0.5)*3,vy:-3,t:0};
+                announce(Math.random()>0.5?'Fly out!':'Ground out!');
+                recordOut();nextBatter();
+            }
+            gameState='result';resultTimer=70;
+        }
+
+        function autoSwing(){
+            // AI for opponents batting - swing with some randomness
+            const inZone = ball.x>ZONE.x-5&&ball.x<ZONE.x+ZONE.w+5&&ball.y>ZONE.y&&ball.y<ZONE.y+ZONE.h;
+            if(inZone && Math.random()<0.65){
+                doSwing();
+            }
+        }
+
+        function update(){
+            if(announceTimer>0) announceTimer--;
+
+            if(gameState==='pitching'){
+                ball.y += ball.vy;
+                ball.x += ball.vx;
+                if(swinging){swingFrame=Math.min(swingFrame+0.5,5);}
+
+                // Check if in swing zone for AI
+                if(!isPiratesBatting() && ball.y > ZONE.y && ball.y < ZONE.y+ZONE.h && !swinging){
+                    autoSwing();
+                    return;
+                }
+
+                if(ball.y > ZONE.y + ZONE.h + 20){
+                    // Ball passed zone
+                    const inZone = ball.x>ZONE.x&&ball.x<ZONE.x+ZONE.w&&ball.y<ZONE.y+ZONE.h+40;
+                    if(inZone){
+                        strikes++;
+                        announce('Strike'+(strikes>=3?' three — OUT!':'!'));
+                        if(strikes>=3){recordOut();nextBatter();}
+                    } else {
+                        balls++;
+                        announce('Ball '+ balls+(balls>=4?' — Walk!':''));
+                        if(balls>=4){
+                            advanceRunners(1);
+                            nextBatter();
+                        }
+                    }
+                    gameState='result';resultTimer=45;
+                }
+            }
+
+            if(hitBall){
+                hitBall.x+=hitBall.vx;hitBall.y+=hitBall.vy;hitBall.t++;
+                if(hitBall.t>60) hitBall=null;
+            }
+
+            if(gameState==='result'){
+                resultTimer--;
+                if(resultTimer<=0){
+                    if(gameState!=='gameOver'){
+                        gameState='pitching';
+                        pitch();
+                    }
+                }
+            }
+        }
+
+        function render(){
+            drawDiamond();
+            drawStrikeZone();
+            if(gameState!=='idle'&&gameState!=='gameOver') drawBall();
+            drawBatter();
+            drawHitBall();
+            drawScoreboard();
+            drawAnnounce();
+            if(gameState==='gameOver') drawGameOver();
+        }
+
+        function loop(){
+            if(gameState==='idle'){drawIdle();return;}
+            update();
+            render();
+            frameId=requestAnimationFrame(loop);
+        }
+
+        function startGame(){
+            inning=1;halfInning=0;scores=[0,0];outs=0;strikes=0;balls=0;
+            batterIndex=[0,0];runners=[false,false,false];
+            hitBall=null;gameState='pitching';
+            announce('Play ball! Top of inning 1');
+            // Shuffle lineups
+            for(let i=PIRATES.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[PIRATES[i],PIRATES[j]]=[PIRATES[j],PIRATES[i]];}
+            for(let i=OPPONENTS.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[OPPONENTS[i],OPPONENTS[j]]=[OPPONENTS[j],OPPONENTS[i]];}
+            pitch();
+            if(frameId) cancelAnimationFrame(frameId);
+            loop();
+        }
+
+        canvas.addEventListener('click', function(e){
+            if(gameState==='pitching'&&isPiratesBatting()) doSwing();
+        });
+        canvas.addEventListener('touchstart', function(e){
+            e.preventDefault();
+            if(gameState==='pitching'&&isPiratesBatting()) doSwing();
+        });
+
+        startBtn.addEventListener('click', startGame);
+
+        drawIdle();
+    })();
+    </script>
 
     <footer class="footer">
         <div class="container">
