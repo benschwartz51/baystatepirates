@@ -241,17 +241,31 @@
 
     <script src="js/nav.js"></script>
     <script>
-        // Load Instagram embed.js and process all embeds once ready
+        // Load Instagram embed.js and process all embeds (with retries for mobile)
         (function(){
+            function processEmbeds(){
+                if(window.instgrm && window.instgrm.Embeds){
+                    window.instgrm.Embeds.process();
+                }
+            }
             var s = document.createElement('script');
             s.src = 'https://www.instagram.com/embed.js';
             s.async = true;
             s.onload = function(){
-                if(window.instgrm && window.instgrm.Embeds){
-                    window.instgrm.Embeds.process();
-                }
+                processEmbeds();
+                // Retry a few times for slow mobile connections
+                setTimeout(processEmbeds, 1500);
+                setTimeout(processEmbeds, 4000);
+                setTimeout(processEmbeds, 8000);
             };
-            document.body.appendChild(s);
+            // Wait until DOM is fully ready before appending
+            if(document.readyState === 'complete'){
+                document.body.appendChild(s);
+            } else {
+                window.addEventListener('load', function(){
+                    document.body.appendChild(s);
+                });
+            }
         })();
     </script>
 </body>

@@ -371,6 +371,21 @@ h1, h2, h3, h4, h5, h6 {
     transition: transform 0.2s;
 }
 
+/* Make Instagram embeds responsive on mobile */
+.video-card .instagram-media,
+.video-card blockquote.instagram-media {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+}
+
+.video-card iframe.instagram-media-rendered {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
 .video-card:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
