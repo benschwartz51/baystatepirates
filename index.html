@@ -109,7 +109,7 @@
         const startBtn = document.getElementById('startBtn');
 
         const PIRATES = ['B. Schwartz','N. Marrero','N. Fishman','D. Brookfield','J. Shikora','M. Billig','N. Melluzzo','J. Roop','K. Ohanian','K. Rumph','Z. Santomauro','A. Small','T. Elkin','S. O\'Keefe','N. Braica','I. Sales','B. Rijo','D. Search-Wells','B. Benulis','N. Packard','C. Holland','J. Fishman','J. Lepiarz'];
-        const OPPONENTS = ['R. Johnson','M. Williams','T. Davis','C. Martinez','J. Anderson','P. Thomas','L. Jackson','S. White','D. Harris','B. Clark','K. Lewis','A. Robinson','J. Walker','M. Young','T. Allen','R. King','C. Wright','D. Lopez'];
+        const OPPONENTS = ['M. Cibulski','R. Johnson','M. Williams','T. Davis','C. Martinez','J. Anderson','P. Thomas','L. Jackson','S. White','D. Harris','B. Clark','K. Lewis','A. Robinson','J. Walker','M. Young','T. Allen','R. King','C. Wright','D. Lopez'];
 
         let gameState = 'idle'; // idle, pitching, swingable, result, fielding, gameOver
         let inning = 1, halfInning = 0; // 0=top, 1=bottom
@@ -557,7 +557,7 @@
             announce('Play ball! Top of inning 1');
             // Shuffle lineups
             for(let i=PIRATES.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[PIRATES[i],PIRATES[j]]=[PIRATES[j],PIRATES[i]];}
-            for(let i=OPPONENTS.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[OPPONENTS[i],OPPONENTS[j]]=[OPPONENTS[j],OPPONENTS[i]];}
+            for(let i=OPPONENTS.length-1;i>1;i--){const j=1+Math.floor(Math.random()*i);[OPPONENTS[i],OPPONENTS[j]]=[OPPONENTS[j],OPPONENTS[i]];}
             pitch();
             if(frameId) cancelAnimationFrame(frameId);
             loop();
