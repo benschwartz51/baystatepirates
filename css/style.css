@@ -470,6 +470,14 @@ h1, h2, h3, h4, h5, h6 {
     flex-shrink: 0;
 }
 
+.rule-star {
+    margin-left: auto;
+    color: #FDB827;
+    font-size: 1.4rem;
+    text-shadow: 0 0 6px rgba(253, 184, 39, 0.5);
+    flex-shrink: 0;
+}
+
 .rule-card p, .rule-card ul {
     color: var(--gray-800);
     line-height: 1.7;
